@@ -1,72 +1,34 @@
-# OLOS Protocol V3
+# Open Loyalty Operating System (OLOS)
 
-**Offline-First Transaction Integrity • Escrow-Bounded Authorization • Asynchronous Settlement**
+**A vendor-neutral, privacy-preserving interoperability protocol for customer loyalty programs — with a bounded, offline-first transaction security model.**
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.3--prototype-orange)](https://github.com/markangell88-olos/OLOS-Architecture-Working-Group/releases)
-[![Status](https://img.shields.io/badge/Status-Technical_Validation_Prototype-success)](https://github.com/markangell88-olos/OLOS-Architecture-Working-Group)
+> **Status: Open Protocol Proposal & Architecture Prototype.**
+> This is not production software, certified infrastructure, or a finished standard. It is published to invite technical review from payments, security, and distributed-systems practitioners. See [Non-Goals](#non-goals-prototype) for what this explicitly does not claim.
 
-A vendor-neutral, privacy-preserving interoperability protocol for secure transaction processing in intermittently connected environments.
+## The Problem, in One Paragraph
 
----
+The global loyalty industry runs on a trial balance that never closes — every program keeps isolated books, merchants carry hundreds of billions in unredeemed liabilities, and there's no common settlement rail connecting one program's value to another's. Payments solved this decades ago with shared network rails and clearing standards. Loyalty never has. OLOS proposes that missing interoperability and settlement layer, without asking merchants to pool programs into a shared currency or give up their margins.
 
-## Table of Contents
+## What's in This Repository
 
-- [Overview](#overview)
-- [Design Goals](#design-goals)
-- [Core Architecture](#core-architecture)
-- [Double-Spend Mitigation](#double-spend-mitigation)
-- [Security Model & Threat Analysis](#security-model--threat-analysis)
-- [Getting Started / Review Guide](#getting-started--review-guide)
-- [Contributing](#contributing)
-- [License](#license)
+| File | What it covers | Start here if you want... |
+|---|---|---|
+| **[OLOS-Technical-Specification-v2_0_2.pdf](./OLOS-Technical-Specification-v2_0_2.pdf)** | The core protocol: message envelope, event registry, rules engine, settlement, identity, governance, escrow, resilience, certification | The full normative spec — **start here** |
+| **[OLOS-V3-Protocol.pdf](./OLOS-V3-Protocol.pdf)** | Deep-dive prototype on offline double-spend mitigation, escrow-bounded authorization, and the security/threat model | The security architecture specifically |
+| **[OLOS_White_Paper_v1_with_Flow_Diagram.pdf](./OLOS_White_Paper_v1_with_Flow_Diagram.pdf)** | Executive framing — the business case, stakeholder value, and high-level architecture | A non-technical overview |
 
----
+*(`README.pdf` is an earlier draft of the technical specification and is superseded by the v2.0.2 spec above.)*
 
-## Overview
+## How to Review This
 
-OLOS (Open Loyalty Operating System) proposes a practical dual-layer architecture for transaction integrity where continuous connectivity cannot be assumed.
+If you're evaluating OLOS technically, the fastest path in is:
 
-**Central Principle**: Cryptography provides integrity and provenance. **Economic bounding** (escrow) + **deferred authoritative reconciliation** limits real-world exposure.
+- **OLOS-0000–0002** (core spec) — envelope structure, event routing, and the architectural tenets everything else builds on
+- **OLOS-0009** (core spec) — escrow and liquidity management, including Appendix B's headroom verification modes
+- **V3 §17–20** — the explicit security model, threat analysis, and test suite for offline double-spending
 
-It explicitly does **not** claim to eliminate all offline double-spend risk through cryptography alone — instead, it combines bounded authorization, deterministic processing, and immutable settlement.
+## Author
 
-**Perfect for**:
-- Loyalty programs
-- Offline retail / travel payments
-- Intermittent connectivity environments
-- Privacy-first asset exchange
-
-**[📄 Full White Paper with Diagrams](OLOS_White_Paper_v1_with_Flow_Diagram.pdf)** | **[📋 Protocol Spec (PDF)](README.pdf)**
+OLOS is authored by Mark Angell as an independent protocol proposal, published by the OLOS Architecture Working Group to encourage industry discussion, technical evaluation, and collaboration.
 
 ---
-
-## Design Goals
-
-### Primary Goals
-- Support secure transaction creation while fully disconnected
-- Preserve cryptographic integrity across offline/online transitions
-- Use deterministic fixed-point math for monetary values
-- Separate transaction identity from transport identity
-- Bound offline exposure via merchant/device escrow
-- Enable reliable asynchronous reconciliation
-- Provide explicit, auditable states and fault semantics
-
-### Non-Goals (Prototype)
-- Production certifications (PCI, EMV, etc.)
-- Guaranteed elimination of every possible double-spend
-- Full production consensus or HSM integration
-
-See the full list in the [detailed README](https://github.com/markangell88-olos/OLOS-Architecture-Working-Group/blob/main/README.md#design-goals).
-
----
-
-## Core Architecture
-
-```mermaid
-graph TD
-    A[Trust Registry] -->|Signed Escrow Token| B[OLOS Edge / POS]
-    B -->|Offline Rules + Local Escrow Decrement| C[Local Queue]
-    C -->|Reconnect| D[Ingestion Plane]
-    D -->|Validation + Long-term Lookup| E[Settlement Core]
-    E -->|Atomic State Transition| F[Final Settlement]
