@@ -1,4 +1,7 @@
 # Open Loyalty Operating System (OLOS)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Spec Version](https://img.shields.io/badge/Spec-2.0.2-blue)](./OLOS-Technical-Specification-v2_0_2.pdf)
+[![Status](https://img.shields.io/badge/Status-Public_Proposal-green)](#status-open-protocol-proposal--architecture-prototype)
 
 **A vendor-neutral, privacy-preserving interoperability protocol for customer loyalty programs — with a bounded, offline-first transaction security model.**
 
